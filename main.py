@@ -37,15 +37,15 @@ def load_sub(path, deleted_char, quite):
     data = []
 
     # for all files inside PATH
-    for i in os.listdir(PATH):
-        file_path = PATH + i
+    for i in os.listdir(path):
+        file_path = path + i
         with open(file_path, "r", encoding="utf-8") as file:
             if not quite:
                 print("Opening file: ", end="")
                 print(Fore.GREEN + file_path)
             content = file.read()
             # Delete timestamp and other stuff
-            for ch in DELETED_CHAR:
+            for ch in deleted_char:
                 content = content.replace(ch, "")
             lines = content.split("\n")
         print(Style.RESET_ALL, end="")  # Reset the style of CLI
