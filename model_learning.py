@@ -173,6 +173,8 @@ def get_axis(data, q=False):
     for y in tqdm(pat_y):
         bag_y = convert2bag(y, words, already_tokenized=True)
         output.append(bag_y)
+        
+    print(Fore.RED)
     # X preparation
     for x in tqdm(pat_x):
         bag_x = convert2bag(x, words, already_tokenized=True)
