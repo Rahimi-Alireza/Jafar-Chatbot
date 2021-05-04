@@ -95,7 +95,6 @@ def save_proccessed(tup):
     """
     with open("data.picke", "wb") as file:  # Write in binary
         pickle.dump(tup, file)
-
 def get_axis(data):
     """Create x and y axis based on data
     Data should be provided by main.py
@@ -166,23 +165,26 @@ def get_axis(data):
     train = np.array(train)
     output = np.array(output)
     
-    save_proccessed((words,train,output)) #Save for the second run optimization
+    re = (words,train,output)
+    
+    save_proccessed(re) #Save for the second run optimization
+    return(re)
 
-    # Reset all previous data
-    tf.reset_default_graph()
+# Reset all previous data
+tf.reset_default_graph()
 
-    # Declare the input shape ,All train elements have same len
-    net = tflearn.input_data(shape=[None, len(train[0])])
-    # Each represent a HIDDEN LAYER
-    net = tflearn.fully_connected(net, 8)
-    net = tflearn.fully_connected(net, 8)
-    # Softmax represent possiblity like 0.54
-    # This is the output layer
-    # We use the highest possibility answer in json file
-    net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
-    net = tflearn.regression(net)
+# Declare the input shape ,All train elements have same len
+net = tflearn.input_data(shape=[None, len(train[0])])
+# Each represent a HIDDEN LAYER
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, 8)
+# Softmax represent possiblity like 0.54
+# This is the output layer
+# We use the highest possibility answer in json file
+net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
+net = tflearn.regression(net)
 
-    model = tflearn.DNN(net)
+model = tflearn.DNN(net)
 
 
 try:
