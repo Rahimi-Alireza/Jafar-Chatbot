@@ -96,7 +96,7 @@ def save_proccessed(tup):
     with open("data.picke", "wb") as file:  # Write in binary
         pickle.dump(tup, file)
 
-def initalize(data):
+def get_axis(data):
     """Create x and y axis based on data
     Data should be provided by main.py
     and based on subtitles translations
