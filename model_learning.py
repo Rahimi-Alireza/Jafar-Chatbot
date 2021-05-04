@@ -87,6 +87,8 @@ def open_proccesed():
         return None
 
     return (words, training, output)
+
+
 def save_proccessed(tup):
     """Save words, training, output set from currently proccessed data
     if the data gets too much we don't want to do it again
@@ -95,6 +97,8 @@ def save_proccessed(tup):
     """
     with open("data.picke", "wb") as file:  # Write in binary
         pickle.dump(tup, file)
+
+
 def get_axis(data):
     """Create x and y axis based on data
     Data should be provided by main.py
@@ -164,31 +168,36 @@ def get_axis(data):
     # Also it's more efficent in Speed, Memory, Performance
     train = np.array(train)
     output = np.array(output)
-    
-    re = (words,train,output)
 
-    save_proccessed(re) #Save for the second run optimization
-    return(re)
-def train(re,HIDDEN_LAYERS=5):
+    re = (words, train, output)
+
+    save_proccessed(re)  # Save for the second run optimization
+    return re
+
+
+def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=True):
     """Training based on train,output we had. It'll try to make connection between
     bag_x and bag_y .Remember that this model just understands what you said FOR NOW
     and returns a sentence from data and CAN NOT CREATE SENTENCES BY ITSELF
-    Params: 
+    Params:
         re (tuple): a tuple containing words, training, output
         HIDDEN_LAYERS (int): a number that specify hidden layers for our model
+        epoch (int) : a number shows epoch for model
+        batch (int) : a number shows batch size for model
+        metric (boll) : shows log or not
     """
 
-    #TODO CREATE SENTENCES BY ITSELF
-    words,train,output = re
+    # TODO CREATE SENTENCES BY ITSELF
+    words, train, output = re
     # Reset all previous data
     tf.reset_default_graph()
 
     # Declare the input shape ,All train elements have same len
     net = tflearn.input_data(shape=[None, len(train[0])])
 
-    #Loop through for HIDDEN_LAYERS
+    # Loop through for HIDDEN_LAYERS
     for i in range(HIDDEN_LAYERS):
-        net = tflearn.fully_connected(net, 8) # Each represent a HIDDEN LAYER
+        net = tflearn.fully_connected(net, 8)  # Each represent a HIDDEN LAYER
     # Softmax represent possiblity like 0.54
     # This is the output layer
     # We use the highest possibility answer in json file
@@ -204,7 +213,7 @@ def train(re,HIDDEN_LAYERS=5):
         # Pass the data
         # This model wants to figure out the relate of usage of some words
         # and intent tags
-        model.fit(train, output, n_epoch=100, batch_size=10, show_metric=True)
+        model.fit(train, output, n_epoch=epoch, batch_size=batch, show_metric=metric)
         model.save("model.tflearn")
 
 
