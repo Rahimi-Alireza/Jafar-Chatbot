@@ -166,36 +166,46 @@ def get_axis(data):
     output = np.array(output)
     
     re = (words,train,output)
-    
+
     save_proccessed(re) #Save for the second run optimization
     return(re)
+def train(re,HIDDEN_LAYERS=5):
+    """Training based on train,output we had. It'll try to make connection between
+    bag_x and bag_y .Remember that this model just understands what you said FOR NOW
+    and returns a sentence from data and CAN NOT CREATE SENTENCES BY ITSELF
+    Params: 
+        re (tuple): a tuple containing words, training, output
+        HIDDEN_LAYERS (int): a number that specify hidden layers for our model
+    """
 
-# Reset all previous data
-tf.reset_default_graph()
+    #TODO CREATE SENTENCES BY ITSELF
+    words,train,output = re
+    # Reset all previous data
+    tf.reset_default_graph()
 
-# Declare the input shape ,All train elements have same len
-net = tflearn.input_data(shape=[None, len(train[0])])
-# Each represent a HIDDEN LAYER
-net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, 8)
-# Softmax represent possiblity like 0.54
-# This is the output layer
-# We use the highest possibility answer in json file
-net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
-net = tflearn.regression(net)
+    # Declare the input shape ,All train elements have same len
+    net = tflearn.input_data(shape=[None, len(train[0])])
 
-model = tflearn.DNN(net)
+    #Loop through for HIDDEN_LAYERS
+    for i in range(HIDDEN_LAYERS):
+        net = tflearn.fully_connected(net, 8) # Each represent a HIDDEN LAYER
+    # Softmax represent possiblity like 0.54
+    # This is the output layer
+    # We use the highest possibility answer in json file
+    net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
+    net = tflearn.regression(net)
 
+    model = tflearn.DNN(net)
 
-try:
-    # If we have the model, Load it
-    model.load("modedl.tflearn")
-except:
-    # Pass the data
-    # This model wants to figure out the relate of usage of some words
-    # and intent tags
-    model.fit(train, output, n_epoch=100, batch_size=10, show_metric=True)
-    model.save("model.tflearn")
+    try:
+        # If we have the model, Load it
+        model.load("modedl.tflearn")
+    except:
+        # Pass the data
+        # This model wants to figure out the relate of usage of some words
+        # and intent tags
+        model.fit(train, output, n_epoch=100, batch_size=10, show_metric=True)
+        model.save("model.tflearn")
 
 
 def chat():
