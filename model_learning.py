@@ -77,7 +77,9 @@ def convert2bag(sentence, words):
 
 def open_proccesed():
     """Initilize words, training, output set from previosly saved
-    to a pickle file hardcoded in program named data.pickle"""
+    to a pickle file hardcoded in program named data.pickle
+    Return:
+        a tuple containing words, training, output"""
     try:
         with open("data.picke", "rb") as file:  # read binary
             words, training, output = pickle.load(file)
@@ -85,7 +87,14 @@ def open_proccesed():
         return None
 
     return (words, training, output)
-
+def save_proccessed(tup):
+    """Save words, training, output set from currently proccessed data
+    if the data gets too much we don't want to do it again
+    Params:
+        tup (tuple): a tuple containing words, training, output
+    """
+    with open("data.picke", "wb") as file:  # Write in binary
+        pickle.dump(tup, file)
 
 def initalize(data):
     """Create x and y axis based on data
@@ -95,7 +104,13 @@ def initalize(data):
 
     Params:
         data (array): containing sentences given from main.py after proccessing the subs
+    Return:
+        a tuple containing words, training, output
     """
+    opened_pickle = open_proccesed()
+    if opened_pickle is not None:
+        return opened_pickle
+
     # Machine learning is a curve you need X and Y
     # In this Case we are CREATING BAGS so it will fit our X
     # Y can be either bag or an intent tag (like previos versions of program)
@@ -150,10 +165,8 @@ def initalize(data):
     # Also it's more efficent in Speed, Memory, Performance
     train = np.array(train)
     output = np.array(output)
-
-    with open("data.picke", "wb") as file:  # Write in binary
-        # Save arrays to a pickle file
-        pickle.dump((words, training, output), file)
+    
+    save_proccessed((words,train,output)) #Save for the second run optimization
 
     # Reset all previous data
     tf.reset_default_graph()
