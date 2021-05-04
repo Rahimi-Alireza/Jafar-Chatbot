@@ -8,11 +8,13 @@ import argparse
 import random
 import numpy as np
 
-"""Create argparse for more power over CLI
-"""
-
 
 def init_argparse():
+    """Create argparse for more power over CLI
+    and more customizability
+    Return: 
+        args : needed to determine values passed by options
+    """
     parser = argparse.ArgumentParser(
         description="Small persian chatbot based on deep learning."
     )
@@ -55,6 +57,12 @@ def init_argparse():
 def load_sub(path, deleted_char, quite):
 
     """Loading Training Dataset by using translated subtitles
+    Params:
+        path (str): directory path
+        deleted_char (str): characters that should be removed from our input data
+        quite (bool): Unix rule of silence
+    Return:
+        data : an array containing all of sentences in all files
     """
 
     data = []
