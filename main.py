@@ -1,6 +1,5 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
-from ast import Str
 from colorama import Fore, Style
 import model_learning as ml
 import os
