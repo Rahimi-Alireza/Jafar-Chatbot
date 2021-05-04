@@ -76,7 +76,7 @@ def load_sub(path, deleted_char, quite):
         except: #UTF16
             with open(file_path, "r", encoding="utf16") as file:
                 content = file.read()
-
+    
             
         # Delete timestamp and other stuff
         for ch in deleted_char:

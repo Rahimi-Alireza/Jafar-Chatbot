@@ -44,7 +44,7 @@ def tokenize(sentence):
                 # No break , We can have 2 or more pasvands
 
         for pish in pishvand:
-            if fw.starswith(pish):
+            if fw.startswith(pish):
                 fw = fw.replace(pish, "")
 
         result_words.append(fw)
@@ -52,7 +52,7 @@ def tokenize(sentence):
     return result_words
 
 
-def convert2bag(sentence, words):
+def convert2bag(sentence, words, already_tokenized=False):
     """Convert the sentence to a bag of words
     Containing 0 or 1 . Each 0 or 1 means
     If a word is in a sentence or not
@@ -60,10 +60,15 @@ def convert2bag(sentence, words):
 
     Param:
         sentence (str): string that is wanted to be converted
-        words (array): ALL words of ALL sentences"""
+        words (array): ALL words of ALL sentences
+        already_tokenized (bool): Sometimes this method is called with
+            Already tokenized array and it'll prompt a error if we try to tokenize it again"""
     bag = [0 for _ in words]
 
-    sentence_words = tokenize(sentence)
+    if already_tokenized:
+        sentence_words = sentence
+    else:
+        sentence_words = tokenize(sentence)
 
     for se in sentence_words:
         for i, word in enumerate(words):
@@ -153,8 +158,10 @@ def get_axis(data, q=False):
 
         pat_y.append(ws)  # Last index = i-1
 
+    pat_y.append(None)  # To make pat_x and pat_y have same index
+
     if not q:
-        print(Fore.GREEN + str(len(words) + " words loaded ..."))
+        print(Fore.GREEN + str(len(words)) + " words loaded ...")
     # Remove duplicates
     words = sorted(list(set(words)))
 
@@ -163,11 +170,11 @@ def get_axis(data, q=False):
 
     # Y preparations
     for y in pat_y:
-        bag_y = convert2bag(y, words)
+        bag_y = convert2bag(y, words, already_tokenized=True)
         output.append(bag_y)
     # X preparation
     for x in pat_x:
-        bag_x = convert2bag(x, words)
+        bag_x = convert2bag(x, words, already_tokenized=True)
         train.append(bag_x)
     if not q:
         print(Fore.CYAN + str(len(train) + " training set loaded"))
@@ -228,6 +235,3 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
         model.fit(train, output, n_epoch=epoch, batch_size=batch, show_metric=metric)
         model.save("model.tflearn")
     return model
-
-
-
