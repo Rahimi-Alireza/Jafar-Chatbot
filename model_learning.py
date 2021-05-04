@@ -5,7 +5,6 @@ from colorama import Fore, Style
 import tflearn
 import tensorflow as tf
 import random
-import json
 import pickle
 
 
