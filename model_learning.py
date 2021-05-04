@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # -*- coding: utf-8 -*-
 import numpy as np
 
@@ -55,10 +54,17 @@ def tokenize(sentence):
     return result_words
 
 
-"""Create x and y axis based on data
-Data should be provided by main.py
-and based on subtitles translations"""
+
 def initalize(data):
+    """Create x and y axis based on data
+    Data should be provided by main.py
+    and based on subtitles translations
+    data
+
+    Params:
+        data (array): containing sentences given from main.py after proccessing the subs
+    """
+
     try:
         # We saved stemmed words and other stuff in a picke file
         # So we won't process it 2 times
@@ -66,12 +72,21 @@ def initalize(data):
         words, labels, training, output = pickle.load(file)
         file.close()
     except:
+        """ #Machine learning is a curve you need X and Y
+        In this Case we are CREATING BAGS so it will fit our X
+        Y can be either bag or an intent tag (like previos versions of program)
+        We are using subtitles so we can't use intent tags becuase can't relate a sentence
+        To a specific topic. so in the end We have like len(words)=20000 or maybe greater
+        and every bags is like this and finding relatness between this bags of 20000 words
+        is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT """
+        pat_x = []
+        pat_y = []
         words = []
         labels = []
         pat = []
         pat_intent = []
 
-        for i in data["intents"]:
+        for i in data:
             for pattern in i["pattern"]:
                 # Split the root sentence to smaller words
                 ws = tokenize(pattern)
@@ -149,11 +164,16 @@ except:
     model.save("model.tflearn")
 
 
-""" Convert the sentence to a bag of words
- Containing 0 or 1 . Each 0 or 1 means
- If a word is in a sentence or not
- So model can predict by the training data"""
+
 def convert2bag(sentence, words):
+    """ Convert the sentence to a bag of words
+    Containing 0 or 1 . Each 0 or 1 means
+    If a word is in a sentence or not
+    So model can predict by the training data
+    
+    Param:
+        sentence (str): 
+        words (array): """
     bag = [0 for _ in words]
 
     sentence_words = nltk.word_tokenize(sentence)
