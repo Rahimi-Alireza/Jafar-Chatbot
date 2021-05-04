@@ -110,15 +110,16 @@ def get_axis(data, quite=False):
     Return:
         a tuple containing words, training, output
     """
-    print(Fore.CYAN + 'Opening pickle file ...')
+    print(Fore.CYAN + "Opening pickle file ...")
     opened_pickle = open_proccesed()
     if opened_pickle is not None:
-        if not quite: print(Fore.GREEN + 'Pickle file loaded . ignoring proccessing')
+        if not quite:
+            print(Fore.GREEN + "Pickle file loaded . ignoring proccessing")
         return opened_pickle
-        
-    if not quite: 
-        print(Fore.RED + 'Pickle file doesn\'t exist')
-        print(Style.RESET_ALL + 'Proccessing to create training set')
+
+    if not quite:
+        print(Fore.RED + "Pickle file doesn't exist")
+        print(Style.RESET_ALL + "Proccessing to create training set")
 
     # Machine learning is a curve you need X and Y
     # In this Case we are CREATING BAGS so it will fit our X
@@ -154,7 +155,8 @@ def get_axis(data, quite=False):
 
         pat_y.append(ws)  # Last index = i-1
 
-    if not quite: print(Fore.GREEN + str(len(words) + ' words loaded ...'))
+    if not quite:
+        print(Fore.GREEN + str(len(words) + " words loaded ..."))
     # Remove duplicates
     words = sorted(list(set(words)))
 
@@ -169,7 +171,8 @@ def get_axis(data, quite=False):
     for x in pat_x:
         bag_x = convert2bag(x, words)
         train.append(bag_x)
-    if not quite: print(Fore.CYAN + str(len(train) + ' training set loaded'))
+    if not quite:
+        print(Fore.CYAN + str(len(train) + " training set loaded"))
 
     # Numpy array is required for training
     # Also it's more efficent in Speed, Memory, Performance
@@ -178,7 +181,8 @@ def get_axis(data, quite=False):
 
     re = (words, train, output)
 
-    if not quite: print(Fore.CYAN +'Saving to pickle file for second run'))
+    if not quite:
+        print(Fore.CYAN + "Saving to pickle file for second run")
     save_proccessed(re)  # Save for the second run optimization
     return re
 
