@@ -72,13 +72,13 @@ def initalize(data):
         words, labels, training, output = pickle.load(file)
         file.close()
     except:
-        """ #Machine learning is a curve you need X and Y
-        In this Case we are CREATING BAGS so it will fit our X
-        Y can be either bag or an intent tag (like previos versions of program)
-        We are using subtitles so we can't use intent tags becuase can't relate a sentence
-        To a specific topic. so in the end We have like len(words)=20000 or maybe greater
-        and every bags is like this and finding relatness between this bags of 20000 words
-        is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT """
+        #Machine learning is a curve you need X and Y
+        #In this Case we are CREATING BAGS so it will fit our X
+        #Y can be either bag or an intent tag (like previos versions of program)
+        #We are using subtitles so we can't use intent tags becuase can't relate a sentence
+        #To a specific topic. so in the end We have like len(words)=20000 or maybe greater
+        #and every bags is like this and finding relatness between this bags of 20000 words
+        #is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT
         pat_x = []
         pat_y = []
         words = []
@@ -86,18 +86,34 @@ def initalize(data):
         pat = []
         pat_intent = []
 
-        for i in data:
-            for pattern in i["pattern"]:
-                # Split the root sentence to smaller words
-                ws = tokenize(pattern)
-                # Add all smaller ws to words list
-                words.extend(ws)
+        #In this program we suppose that each sentence in subtitles is a response to another
+        #So if we have third sentence like A, B, C coming after each other we'll have Question and Answer
+        #In program like this: 
+        #X = [A, B, C]
+        #Y = [B, C, none]
+        #It's not very accurate model but it can gives better result with much less data provided
+        for i,d in enumerate(data):
+            
+            # Split the root sentence to smaller words
+            ws = tokenize(d)
+            # Add all smaller ws to words list
+            #Words(array) contains ALL words in ALL sentences
+            words.extend(ws)
+            pat_x.append(ws) #Last index = i
 
-                pat.append(ws)
-                pat_intent.append(intent["tag"])
+            #If it's the first sentence we don't want to add it to our Y
+            #OR our question, answer will be like this
+            #[A, B, C]
+            #[A, B, C]
+            if i == 0: 
+                continue
 
-                if not i["tag"] in labels:
-                    labels.append(i["tag"])
+            pat_y.append(ws) #Last index = i-1
+
+            pat_intent.append(intent["tag"])
+
+            if not i["tag"] in labels:
+                labels.append(i["tag"])
 
         #Remove duplicates
         words = sorted(list(set(words)))
