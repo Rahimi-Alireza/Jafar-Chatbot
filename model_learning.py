@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import numpy as np
-
+from colorama import Fore, Style
 import tflearn
 import tensorflow as tf
 import random
@@ -99,7 +99,7 @@ def save_proccessed(tup):
         pickle.dump(tup, file)
 
 
-def get_axis(data):
+def get_axis(data, quite=False):
     """Create x and y axis based on data
     Data should be provided by main.py
     and based on subtitles translations
@@ -110,9 +110,15 @@ def get_axis(data):
     Return:
         a tuple containing words, training, output
     """
+    print(Fore.CYAN + 'Opening pickle file ...')
     opened_pickle = open_proccesed()
     if opened_pickle is not None:
+        if not quite: print(Fore.GREEN + 'Pickle file loaded . ignoring proccessing')
         return opened_pickle
+        
+    if not quite: 
+        print(Fore.RED + 'Pickle file doesn\'t exist')
+        print(Style.RESET_ALL + 'Proccessing to create training set')
 
     # Machine learning is a curve you need X and Y
     # In this Case we are CREATING BAGS so it will fit our X
@@ -132,7 +138,6 @@ def get_axis(data):
     # Y = [B, C, none]
     # It's not very accurate model but it can gives better result with much less data provided
     for i, d in enumerate(data):
-
         # Split the root sentence to smaller words
         ws = tokenize(d)
         # Add all smaller ws to words list
@@ -149,6 +154,7 @@ def get_axis(data):
 
         pat_y.append(ws)  # Last index = i-1
 
+    if not quite: print(Fore.GREEN + str(len(words) + ' words loaded ...'))
     # Remove duplicates
     words = sorted(list(set(words)))
 
@@ -163,6 +169,7 @@ def get_axis(data):
     for x in pat_x:
         bag_x = convert2bag(x, words)
         train.append(bag_x)
+    if not quite: print(Fore.CYAN + str(len(train) + ' training set loaded'))
 
     # Numpy array is required for training
     # Also it's more efficent in Speed, Memory, Performance
@@ -171,6 +178,7 @@ def get_axis(data):
 
     re = (words, train, output)
 
+    if not quite: print(Fore.CYAN +'Saving to pickle file for second run'))
     save_proccessed(re)  # Save for the second run optimization
     return re
 
