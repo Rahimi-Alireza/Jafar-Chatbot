@@ -50,9 +50,28 @@ def tokenize(sentence):
                 fw = fw.replace(pish, "")
 
         result_words.append(fw)
-        
+
     return result_words
 
+def convert2bag(sentence, words):
+    """Convert the sentence to a bag of words
+    Containing 0 or 1 . Each 0 or 1 means
+    If a word is in a sentence or not
+    So model can predict by the training data
+
+    Param:
+        sentence (str): string that is wanted to be converted
+        words (array): ALL words of ALL sentences"""
+    bag = [0 for _ in words]
+
+    sentence_words = tokenize(sentence)
+
+    for se in sentence_words:
+        for i, word in enumerate(words):
+            if word == se:
+                bag[i] = 1
+
+    return np.array(bag)
 
 
 def initalize(data):
@@ -72,79 +91,62 @@ def initalize(data):
         words, labels, training, output = pickle.load(file)
         file.close()
     except:
-        #Machine learning is a curve you need X and Y
-        #In this Case we are CREATING BAGS so it will fit our X
-        #Y can be either bag or an intent tag (like previos versions of program)
-        #We are using subtitles so we can't use intent tags becuase can't relate a sentence
-        #To a specific topic. so in the end We have like len(words)=20000 or maybe greater
-        #and every bags is like this and finding relatness between this bags of 20000 words
-        #is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT
+        # Machine learning is a curve you need X and Y
+        # In this Case we are CREATING BAGS so it will fit our X
+        # Y can be either bag or an intent tag (like previos versions of program)
+        # We are using subtitles so we can't use intent tags becuase can't relate a sentence
+        # To a specific topic. so in the end We have like len(words)=20000 or maybe greater
+        # and every bags is like this and finding relatness between this bags of 20000 words
+        # is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT
         pat_x = []
         pat_y = []
         words = []
-        labels = []
-        pat = []
-        pat_intent = []
 
-        #In this program we suppose that each sentence in subtitles is a response to another
-        #So if we have third sentence like A, B, C coming after each other we'll have Question and Answer
-        #In program like this: 
-        #X = [A, B, C]
-        #Y = [B, C, none]
-        #It's not very accurate model but it can gives better result with much less data provided
-        for i,d in enumerate(data):
-            
+        # In this program we suppose that each sentence in subtitles is a response to another
+        # So if we have third sentence like A, B, C coming after each other we'll have Question and Answer
+        # In program like this:
+        # X = [A, B, C]
+        # Y = [B, C, none]
+        # It's not very accurate model but it can gives better result with much less data provided
+        for i, d in enumerate(data):
+
             # Split the root sentence to smaller words
             ws = tokenize(d)
             # Add all smaller ws to words list
-            #Words(array) contains ALL words in ALL sentences
+            # Words(array) contains ALL words in ALL sentences
             words.extend(ws)
-            pat_x.append(ws) #Last index = i
+            pat_x.append(ws)  # Last index = i
 
-            #If it's the first sentence we don't want to add it to our Y
-            #OR our question, answer will be like this
-            #[A, B, C]
-            #[A, B, C]
-            if i == 0: 
+            # If it's the first sentence we don't want to add it to our Y
+            # OR our question, answer will be like this
+            # [A, B, C]
+            # [A, B, C]
+            if i == 0:
                 continue
 
-            pat_y.append(ws) #Last index = i-1
+            pat_y.append(ws)  # Last index = i-1
 
-            pat_intent.append(intent["tag"])
-
-            if not i["tag"] in labels:
-                labels.append(i["tag"])
-
-        #Remove duplicates
+        # Remove duplicates
         words = sorted(list(set(words)))
-
-        labels = sorted(labels)
 
         train = []
         output = []
-        example_row = [0 for i in labels]
+        
+        example_row = [0 for _ in pat_y]
 
-        for i in range(len(pat)):
-            bag = []
-            sentence = list(pat[i])
-
-            for w in words:  # Loop through all of the words
-                # Create a word detection system with 0 and 1
-                if w in sentence:
-                    bag.append(1)
-                else:
-                    bag.append(0)
+        for i, x in enumerate(pat_x):
+            bag_x = convert2bag(x, words)
 
             # Create a copy of example row
             output_row = list(example_row)
             # Change 0 to 1 where intent of the pattern is right
             output_row[labels.index(pat_intent[i])] = 1
 
-            train.append(bag)
+            train.append(bag_x)
             output.append(output_row)
 
         # Numpy array is required for training
-        # Also it's more efficent in speed, memory, performance
+        # Also it's more efficent in Speed, Memory, Performance
         train = np.array(train)
         output = np.array(output)
 
@@ -169,6 +171,7 @@ def initalize(data):
 
     model = tflearn.DNN(net)
 
+
 try:
     # If we have the model, Load it
     model.load("modedl.tflearn")
@@ -179,28 +182,6 @@ except:
     model.fit(train, output, n_epoch=100, batch_size=10, show_metric=True)
     model.save("model.tflearn")
 
-
-
-def convert2bag(sentence, words):
-    """ Convert the sentence to a bag of words
-    Containing 0 or 1 . Each 0 or 1 means
-    If a word is in a sentence or not
-    So model can predict by the training data
-    
-    Param:
-        sentence (str): 
-        words (array): """
-    bag = [0 for _ in words]
-
-    sentence_words = nltk.word_tokenize(sentence)
-    sentence_words = [stemmer.stem(_.lower()) for _ in sentence_words]
-
-    for se in sentence_words:
-        for i in range(len(words)):
-            if words[i] == se:
-                bag[i] = 1
-
-    return np.array(bag)
 
 
 def chat():
