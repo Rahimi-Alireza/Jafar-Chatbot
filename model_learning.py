@@ -129,21 +129,17 @@ def initalize(data):
         # Remove duplicates
         words = sorted(list(set(words)))
 
-        train = []
-        output = []
+        train = [] #X
+        output = [] #Y
         
-        example_row = [0 for _ in pat_y]
-
-        for i, x in enumerate(pat_x):
+        #Y preparations
+        for y in pat_y:
+            bag_y = convert2bag(y, words)
+            output.append(bag_y)
+        #X preparation
+        for x in pat_x:
             bag_x = convert2bag(x, words)
-
-            # Create a copy of example row
-            output_row = list(example_row)
-            # Change 0 to 1 where intent of the pattern is right
-            output_row[labels.index(pat_intent[i])] = 1
-
             train.append(bag_x)
-            output.append(output_row)
 
         # Numpy array is required for training
         # Also it's more efficent in Speed, Memory, Performance
