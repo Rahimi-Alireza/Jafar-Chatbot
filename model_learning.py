@@ -99,7 +99,7 @@ def save_proccessed(tup):
         pickle.dump(tup, file)
 
 
-def get_axis(data, quite=False):
+def get_axis(data, q=False):
     """Create x and y axis based on data
     Data should be provided by main.py
     and based on subtitles translations
@@ -113,11 +113,11 @@ def get_axis(data, quite=False):
     print(Fore.CYAN + "Opening pickle file ...")
     opened_pickle = open_proccesed()
     if opened_pickle is not None:
-        if not quite:
+        if not q:
             print(Fore.GREEN + "Pickle file loaded . ignoring proccessing")
         return opened_pickle
 
-    if not quite:
+    if not q:
         print(Fore.RED + "Pickle file doesn't exist")
         print(Style.RESET_ALL + "Proccessing to create training set")
 
@@ -155,7 +155,7 @@ def get_axis(data, quite=False):
 
         pat_y.append(ws)  # Last index = i-1
 
-    if not quite:
+    if not q:
         print(Fore.GREEN + str(len(words) + " words loaded ..."))
     # Remove duplicates
     words = sorted(list(set(words)))
@@ -171,7 +171,7 @@ def get_axis(data, quite=False):
     for x in pat_x:
         bag_x = convert2bag(x, words)
         train.append(bag_x)
-    if not quite:
+    if not q:
         print(Fore.CYAN + str(len(train) + " training set loaded"))
 
     # Numpy array is required for training
@@ -181,13 +181,13 @@ def get_axis(data, quite=False):
 
     re = (words, train, output)
 
-    if not quite:
+    if not q:
         print(Fore.CYAN + "Saving to pickle file for second run")
     save_proccessed(re)  # Save for the second run optimization
     return re
 
 
-def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=True):
+def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
     """Training based on train,output we had. It'll try to make connection between
     bag_x and bag_y .Remember that this model just understands what you said FOR NOW
     and returns a sentence from data and CAN NOT CREATE SENTENCES BY ITSELF
@@ -197,6 +197,8 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=True):
         epoch (int) : a number shows epoch for model
         batch (int) : a number shows batch size for model
         metric (boll) : shows log or not
+    Return:
+        model : the model trained or opened
     """
 
     # TODO CREATE SENTENCES BY ITSELF
@@ -227,6 +229,7 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=True):
         # and intent tags
         model.fit(train, output, n_epoch=epoch, batch_size=batch, show_metric=metric)
         model.save("model.tflearn")
+    return model
 
 
 def chat():

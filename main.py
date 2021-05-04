@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 from ast import Str
 from colorama import Fore, Style
-
-# import model_learning
+import model_learning as ml
 import os
 from colorama import Fore, Style
 import argparse
@@ -24,6 +23,27 @@ def init_argparse():
         "--removingchars",
         type=str,
         help="your own custom removing chars from subtitle",
+    )
+    parser.add_argument(
+        "--hiddenlayers", type=int, help="hidden layers for neural network"
+    )
+    parser.add_argument(
+        "-e",
+        "--epoch",
+        type=int,
+        help="epoch for neural network",
+    )
+    parser.add_argument(
+        "-b",
+        "--batch",
+        type=int,
+        help="batch size for neural network",
+    )
+    parser.add_argument(
+        "-m",
+        "--metric",
+        help="Show logs for training powered by tflearn",
+        action="store_true",
     )
     parser.add_argument("-q", "--quite", help="Unix silence rule", action="store_true")
     return parser.parse_args()
@@ -60,18 +80,35 @@ def load_sub(path, deleted_char, quite):
             Fore.BLUE + str(len(data)) + " Sentences loaded"
         )  # Log how many files were loaded
         print(Fore.RED + "Ready to start learning")
+    return data
 
 
 if __name__ == "__main__":
     args = init_argparse()
 
+    # Subtitle loading Consts
     quite = args.quite  # If passed to argparser it'll be True. Else it'll be False
     path = "DATA/"
     deleted_char = "0123456789:-_.><?~!@\"';,؟\\ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
+    # Model Training Consts
+    hidden_layers = 5
+    e = 100  # epoch
+    b = 10  # batch
+    m = args.metric
+
+    # Load params from argparser
     if args.path is not None:
         path = args.path
     if args.removingchars is not None:
         deleted_char = args.removingchars
+    if args.epoch is not None:
+        e = args.epoch
+    if args.batch is not None:
+        b = args.batch
+    if args.hiddenlayers is not None:
+        hidden_layers = args.hiddenlayers
 
-    load_sub(path, deleted_char, quite)
+    data = load_sub(path, deleted_char, quite)
+    re = ml.get_axis(data, q=quite)
+    model = ml.train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
