@@ -159,7 +159,7 @@ def get_axis(data, q=False):
 
         pat_y.append(ws)  # Last index = i-1
 
-    pat_y.append(None)  # To make pat_x and pat_y have same index
+    pat_y.append("")  # To make pat_x and pat_y have same index
 
     if not q:
         print(Fore.GREEN + str(len(words)) + " words loaded ...")
@@ -173,7 +173,7 @@ def get_axis(data, q=False):
     for y in tqdm(pat_y):
         bag_y = convert2bag(y, words, already_tokenized=True)
         output.append(bag_y)
-        
+
     print(Fore.RED)
     # X preparation
     for x in tqdm(pat_x):
