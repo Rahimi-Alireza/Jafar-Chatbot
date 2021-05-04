@@ -7,7 +7,6 @@ import tensorflow as tf
 import pickle
 from tqdm import tqdm
 
-
 def tokenize(sentence):
     words = sentence.split(" ")
     zamir_malekiat = ["ت", "م", "ش", "تان", "شان", "مان"]

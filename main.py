@@ -1,12 +1,14 @@
 #!/bin/python3
 # -*- coding: utf-8 -*-
 from colorama import Fore, Style
-import model_learning as ml
+from model_learning import *
 import os
 from colorama import Fore, Style
 import argparse
 import numpy as np
 import bot
+#import multiprocessing
+
 
 def init_argparse():
     """Create argparse for more power over CLI
@@ -137,8 +139,11 @@ if __name__ == "__main__":
         hidden_layers = args.hiddenlayers
 
     data = load_sub(path, deleted_char, quite)
-    re = ml.get_axis(data, q=quite)
-    model = ml.train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+    cores = multiprocessing.cpu_count()
+    #with multiprocessing.Pool(cores) as p:
+    #    re = p.map(get_axis,data)
+    re = get_axis(data, q=quite)
+    model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
 
     words, training, output, pat_y = re
     bot.run(words, pat_y)
