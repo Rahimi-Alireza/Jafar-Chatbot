@@ -5,9 +5,8 @@ import model_learning as ml
 import os
 from colorama import Fore, Style
 import argparse
-import random
 import numpy as np
-
+import bot
 
 def init_argparse():
     """Create argparse for more power over CLI
@@ -92,9 +91,7 @@ def load_sub(path, deleted_char, quite):
         )  # Log how many files were loaded
         print(Fore.RED + "Ready to start learning")
     return data
-
-
-def chat(words, pat_y):
+def chat(inp):
     """ use model prediction to predict the intent
     of input then response with one of the responses from
     the data . IT CAN NOT PRODUCE SENTENCES . it only 
@@ -103,16 +100,11 @@ def chat(words, pat_y):
         words (array): an array containing all of words in the whole data
         pat_y (array): an array containing responses to pat_x
     """
-    while True:
-        print(Fore.BLUE + 'شما :' , end='')
-        inp = input()
-
-        # Model will return possibilty of intent tags
-        re = model.predict([ml.convert2bag(inp, words)])
-        # Return the highest possibilty sentence
-        sentence = pat_y[np.argmax(re)]
-        print(Fore.GREEN + 'بات :‌ ' , end='') 
-        print(Style.RESET_ALL + sentence)
+    # Model will return possibilty of intent tags
+    re = model.predict([ml.convert2bag(inp, words)])
+    # Return the highest possibilty sentence
+    sentence = pat_y[np.argmax(re)]
+    return sentence
 
 if __name__ == "__main__":
     args = init_argparse()
@@ -145,4 +137,4 @@ if __name__ == "__main__":
     model = ml.train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
 
     words, training, output, pat_y = re
-    chat(words, pat_y)
+    bot.run(words, pat_y)
