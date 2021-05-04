@@ -5,6 +5,8 @@ import model_learning as ml
 import os
 from colorama import Fore, Style
 import argparse
+import random
+import numpy as np
 
 """Create argparse for more power over CLI
 """
@@ -48,13 +50,15 @@ def init_argparse():
     return parser.parse_args()
 
 
-"""Loading Training Dataset by using translated subtitles
-"""
 
 
 def load_sub(path, deleted_char, quite):
-    data = []
 
+    """Loading Training Dataset by using translated subtitles
+    """
+
+    data = []
+    
     # for all files inside PATH
     for i in os.listdir(path):
         file_path = path + i
@@ -81,6 +85,20 @@ def load_sub(path, deleted_char, quite):
         print(Fore.RED + "Ready to start learning")
     return data
 
+
+def chat(words):
+    while True:
+        inp = input("شما: ")
+
+        # Model will return possibilty of intent tags
+        re = model.predict([ml.convert2bag(inp, words)])
+        # Return the highest possibilty intent tag
+        intent_tag = words[np.argmax(re)]
+
+        for i in data["intents"]:  # Loop through all of tags
+            if i["tag"] == intent_tag:
+                responses = i["responses"]
+        print(random.choice(responses))  # Choose a random response from bot
 
 if __name__ == "__main__":
     args = init_argparse()

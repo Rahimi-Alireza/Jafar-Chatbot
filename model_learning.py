@@ -4,7 +4,6 @@ import numpy as np
 from colorama import Fore, Style
 import tflearn
 import tensorflow as tf
-import random
 import pickle
 
 
@@ -231,19 +230,4 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
     return model
 
 
-def chat():
-    print("آماده ایم آماده")
-    while True:
-        inp = input("شما: ").lower()
-        if inp.lower() == "برو بیرون":
-            break
 
-        # Model will return possibilty of intent tags
-        re = model.predict([convert2bag(inp, words)])
-        # Return the highest possibilty intent tag
-        intent_tag = labels[np.argmax(re)]
-
-        for i in data["intents"]:  # Loop through all of tags
-            if i["tag"] == intent_tag:
-                responses = i["responses"]
-        print(random.choice(responses))  # Choose a random response from bot
