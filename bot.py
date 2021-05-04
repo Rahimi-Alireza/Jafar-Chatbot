@@ -23,7 +23,7 @@ class MyClient(discord.Client):
 
     
 def run(words, pat_y):
-    client = MyClient()
+    client = MyClient(words, pat_y)
     with open('token.secret', 'r') as file:
         token = file.read()
     client.run(token)

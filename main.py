@@ -76,8 +76,6 @@ def load_sub(path, deleted_char, quite):
         except: #UTF16
             with open(file_path, "r", encoding="utf16") as file:
                 content = file.read()
-        finally:
-            print(Style.RESET_ALL, end="")  # Reset the style of CLI
 
             
         # Delete timestamp and other stuff
