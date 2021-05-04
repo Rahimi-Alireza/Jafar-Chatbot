@@ -139,7 +139,7 @@ if __name__ == "__main__":
         hidden_layers = args.hiddenlayers
 
     data = load_sub(path, deleted_char, quite)
-    cores = multiprocessing.cpu_count()
+    #cores = multiprocessing.cpu_count()
     #with multiprocessing.Pool(cores) as p:
     #    re = p.map(get_axis,data)
     re = get_axis(data, q=quite)
