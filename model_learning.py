@@ -179,7 +179,7 @@ def get_axis(data, q=False):
         bag_x = convert2bag(x, words, already_tokenized=True)
         train.append(bag_x)
     if not q:
-        print(Fore.CYAN + str(len(train) + " training set loaded"))
+        print(Fore.CYAN + str(len(train)) + " training set loaded")
 
     # Numpy array is required for training
     # Also it's more efficent in Speed, Memory, Performance
