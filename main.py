@@ -95,6 +95,14 @@ def load_sub(path, deleted_char, quite):
 
 
 def chat(words, pat_y):
+    """ use model prediction to predict the intent
+    of input then response with one of the responses from
+    the data . IT CAN NOT PRODUCE SENTENCES . it only 
+    can understand what have been said.
+    Params: 
+        words (array): an array containing all of words in the whole data
+        pat_y (array): an array containing responses to pat_x
+    """
     while True:
         print(Fore.BLUE + 'شما :' , end='')
         inp = input()
