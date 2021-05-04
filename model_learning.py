@@ -73,7 +73,16 @@ def convert2bag(sentence, words):
 
     return np.array(bag)
 
+def open_proccesed():
+    """Initilize words, training, output set from previosly saved
+    to a pickle file hardcoded in program named data.pickle"""
+    try:
+        with open("data.picke", "rb") as file:  # read binary
+            words, training, output = pickle.load(file)
+    except: #No file saved as data.pickle
+        return None
 
+    return(words, training, output)
 def initalize(data):
     """Create x and y axis based on data
     Data should be provided by main.py
@@ -83,73 +92,64 @@ def initalize(data):
     Params:
         data (array): containing sentences given from main.py after proccessing the subs
     """
+    # Machine learning is a curve you need X and Y
+    # In this Case we are CREATING BAGS so it will fit our X
+    # Y can be either bag or an intent tag (like previos versions of program)
+    # We are using subtitles so we can't use intent tags becuase can't relate a sentence
+    # To a specific topic. so in the end We have like len(words)=20000 or maybe greater
+    # and every bags is like this and finding relatness between this bags of 20000 words
+    # is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT
+    pat_x = []
+    pat_y = []
+    words = []
 
-    try:
-        # We saved stemmed words and other stuff in a picke file
-        # So we won't process it 2 times
-        file = open("data.picke", "rb")  # read binary
-        words, labels, training, output = pickle.load(file)
-        file.close()
-    except:
-        # Machine learning is a curve you need X and Y
-        # In this Case we are CREATING BAGS so it will fit our X
-        # Y can be either bag or an intent tag (like previos versions of program)
-        # We are using subtitles so we can't use intent tags becuase can't relate a sentence
-        # To a specific topic. so in the end We have like len(words)=20000 or maybe greater
-        # and every bags is like this and finding relatness between this bags of 20000 words
-        # is too hard .SO PLEASE CONTAIN MORE DATA FOR MORE MORE MORE ACCRATE RESULT
-        pat_x = []
-        pat_y = []
-        words = []
+    # In this program we suppose that each sentence in subtitles is a response to another
+    # So if we have third sentence like A, B, C coming after each other we'll have Question and Answer
+    # In program like this:
+    # X = [A, B, C]
+    # Y = [B, C, none]
+    # It's not very accurate model but it can gives better result with much less data provided
+    for i, d in enumerate(data):
 
-        # In this program we suppose that each sentence in subtitles is a response to another
-        # So if we have third sentence like A, B, C coming after each other we'll have Question and Answer
-        # In program like this:
-        # X = [A, B, C]
-        # Y = [B, C, none]
-        # It's not very accurate model but it can gives better result with much less data provided
-        for i, d in enumerate(data):
+        # Split the root sentence to smaller words
+        ws = tokenize(d)
+        # Add all smaller ws to words list
+        # Words(array) contains ALL words in ALL sentences
+        words.extend(ws)
+        pat_x.append(ws)  # Last index = i
 
-            # Split the root sentence to smaller words
-            ws = tokenize(d)
-            # Add all smaller ws to words list
-            # Words(array) contains ALL words in ALL sentences
-            words.extend(ws)
-            pat_x.append(ws)  # Last index = i
+        # If it's the first sentence we don't want to add it to our Y
+        # OR our question, answer will be like this
+        # [A, B, C]
+        # [A, B, C]
+        if i == 0:
+            continue
 
-            # If it's the first sentence we don't want to add it to our Y
-            # OR our question, answer will be like this
-            # [A, B, C]
-            # [A, B, C]
-            if i == 0:
-                continue
+        pat_y.append(ws)  # Last index = i-1
 
-            pat_y.append(ws)  # Last index = i-1
+    # Remove duplicates
+    words = sorted(list(set(words)))
 
-        # Remove duplicates
-        words = sorted(list(set(words)))
+    train = [] #X
+    output = [] #Y
+    
+    #Y preparations
+    for y in pat_y:
+        bag_y = convert2bag(y, words)
+        output.append(bag_y)
+    #X preparation
+    for x in pat_x:
+        bag_x = convert2bag(x, words)
+        train.append(bag_x)
 
-        train = [] #X
-        output = [] #Y
-        
-        #Y preparations
-        for y in pat_y:
-            bag_y = convert2bag(y, words)
-            output.append(bag_y)
-        #X preparation
-        for x in pat_x:
-            bag_x = convert2bag(x, words)
-            train.append(bag_x)
+    # Numpy array is required for training
+    # Also it's more efficent in Speed, Memory, Performance
+    train = np.array(train)
+    output = np.array(output)
 
-        # Numpy array is required for training
-        # Also it's more efficent in Speed, Memory, Performance
-        train = np.array(train)
-        output = np.array(output)
-
-        file = open("data.picke", "wb")  # Write in binary
+    with open("data.picke", "wb") as file: # Write in binary
         # Save arrays to a pickle file
-        pickle.dump((words, labels, training, output), file)
-        file.close()
+        pickle.dump((words, training, output), file)
 
     # Reset all previous data
     tf.reset_default_graph()
