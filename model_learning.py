@@ -5,6 +5,7 @@ from colorama import Fore, Style
 import tflearn
 import tensorflow as tf
 import pickle
+from tqdm import tqdm
 
 
 def tokenize(sentence):
@@ -169,11 +170,11 @@ def get_axis(data, q=False):
     output = []  # Y
 
     # Y preparations
-    for y in pat_y:
+    for y in tqdm(pat_y):
         bag_y = convert2bag(y, words, already_tokenized=True)
         output.append(bag_y)
     # X preparation
-    for x in pat_x:
+    for x in tqdm(pat_x):
         bag_x = convert2bag(x, words, already_tokenized=True)
         train.append(bag_x)
     if not q:

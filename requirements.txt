@@ -3,3 +3,4 @@ numpy
 tflearn
 tensorflow
 pickle
+tqdm
