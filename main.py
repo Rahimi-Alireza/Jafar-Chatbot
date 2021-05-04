@@ -94,19 +94,17 @@ def load_sub(path, deleted_char, quite):
     return data
 
 
-def chat(words):
+def chat(words, pat_y):
     while True:
-        inp = input("شما: ")
+        print(Fore.BLUE + 'شما :' , end='')
+        inp = input()
 
         # Model will return possibilty of intent tags
         re = model.predict([ml.convert2bag(inp, words)])
-        # Return the highest possibilty intent tag
-        intent_tag = words[np.argmax(re)]
-
-        for i in data["intents"]:  # Loop through all of tags
-            if i["tag"] == intent_tag:
-                responses = i["responses"]
-        print(random.choice(responses))  # Choose a random response from bot
+        # Return the highest possibilty sentence
+        sentence = pat_y[np.argmax(re)]
+        print(Fore.GREEN + 'بات :‌ ' , end='') 
+        print(Style.RESET_ALL + sentence)
 
 if __name__ == "__main__":
     args = init_argparse()
@@ -137,3 +135,6 @@ if __name__ == "__main__":
     data = load_sub(path, deleted_char, quite)
     re = ml.get_axis(data, q=quite)
     model = ml.train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+
+    words, training, output, pat_y = re
+    chat(words, pat_y)

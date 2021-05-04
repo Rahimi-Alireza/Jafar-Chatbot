@@ -80,11 +80,11 @@ def open_proccesed():
         a tuple containing words, training, output"""
     try:
         with open("data.picke", "rb") as file:  # read binary
-            words, training, output = pickle.load(file)
+            words, training, output, pat_y = pickle.load(file)
     except:  # No file saved as data.pickle
         return None
 
-    return (words, training, output)
+    return (words, training, output, pat_y)
 
 
 def save_proccessed(tup):
@@ -177,7 +177,7 @@ def get_axis(data, q=False):
     train = np.array(train)
     output = np.array(output)
 
-    re = (words, train, output)
+    re = (words, train, output, pat_y)
 
     if not q:
         print(Fore.CYAN + "Saving to pickle file for second run")
