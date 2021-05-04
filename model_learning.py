@@ -53,6 +53,7 @@ def tokenize(sentence):
 
     return result_words
 
+
 def convert2bag(sentence, words):
     """Convert the sentence to a bag of words
     Containing 0 or 1 . Each 0 or 1 means
@@ -73,16 +74,19 @@ def convert2bag(sentence, words):
 
     return np.array(bag)
 
+
 def open_proccesed():
     """Initilize words, training, output set from previosly saved
     to a pickle file hardcoded in program named data.pickle"""
     try:
         with open("data.picke", "rb") as file:  # read binary
             words, training, output = pickle.load(file)
-    except: #No file saved as data.pickle
+    except:  # No file saved as data.pickle
         return None
 
-    return(words, training, output)
+    return (words, training, output)
+
+
 def initalize(data):
     """Create x and y axis based on data
     Data should be provided by main.py
@@ -130,14 +134,14 @@ def initalize(data):
     # Remove duplicates
     words = sorted(list(set(words)))
 
-    train = [] #X
-    output = [] #Y
-    
-    #Y preparations
+    train = []  # X
+    output = []  # Y
+
+    # Y preparations
     for y in pat_y:
         bag_y = convert2bag(y, words)
         output.append(bag_y)
-    #X preparation
+    # X preparation
     for x in pat_x:
         bag_x = convert2bag(x, words)
         train.append(bag_x)
@@ -147,7 +151,7 @@ def initalize(data):
     train = np.array(train)
     output = np.array(output)
 
-    with open("data.picke", "wb") as file: # Write in binary
+    with open("data.picke", "wb") as file:  # Write in binary
         # Save arrays to a pickle file
         pickle.dump((words, training, output), file)
 
@@ -177,7 +181,6 @@ except:
     # and intent tags
     model.fit(train, output, n_epoch=100, batch_size=10, show_metric=True)
     model.save("model.tflearn")
-
 
 
 def chat():
