@@ -209,9 +209,9 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
     """
 
     # TODO CREATE SENTENCES BY ITSELF
-    words, train, output = re
+    words, train, output, pat_y = re
     # Reset all previous data
-    tf.reset_default_graph()
+    tf.compat.v1.reset_default_graph()
 
     # Declare the input shape ,All train elements have same len
     net = tflearn.input_data(shape=[None, len(train[0])])
