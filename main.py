@@ -131,7 +131,7 @@ def act(action, inp):
         name = get_name(inp)
         if name is None:
             return "نمیدونم چی رو میگی"
-        os.system(name)
+        os.system("killall " + name)
         return ("حله بستمش")
 
 
@@ -173,9 +173,9 @@ if __name__ == "__main__":
 
     while True:
         inp = input()
-        action = chat_assistant(inp, assitant_model, words, labels))
-        print(action)
-        act(action)
+        action = chat_assistant(inp, assitant_model, words, labels)
+        print(action , get_name(inp))
+        act(action, inp)
 
 
     #re = get_axis(data, q=quite)
