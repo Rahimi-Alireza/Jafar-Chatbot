@@ -8,6 +8,7 @@ import pickle
 from tqdm import tqdm
 import json
 import random
+import intent as database
 
 def tokenize(sentence):
     words = sentence.split(" ")
@@ -199,7 +200,7 @@ def get_axis(data, q=False):
 
 def prepare_assistant(q=False):
     
-    data = intent.get_data()
+    data = database.get_data()
     words = []
     labels = []
     docs_x = []
@@ -291,11 +292,12 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
 
 
 
-def chat_assistant(inp, model, words, labels, data):
+def chat_assistant(inp, model, words, labels):
+    data = database.get_data()
     results = model.predict([convert2bag(inp, words)])
     results_index = np.argmax(results)
     tag = labels[results_index]
     for tg in data["intents"]:
         if tg['tag'] == tag:
-            responses = tg['responses']
-    return random.choice(responses)
+            responses = tg['Action']
+    return responses

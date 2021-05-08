@@ -126,8 +126,8 @@ if __name__ == "__main__":
 
     # Model Training Consts
     hidden_layers = 5
-    e = 10  # epoch
-    b = 40  # batch
+    e = 1000  # epoch
+    b = 10  # batch
     m = args.metric
 
     # Load params from argparser
@@ -154,6 +154,6 @@ if __name__ == "__main__":
     assitant_model = train(re,HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
 
     labels = fourth
-    print(chat_assistant(input(), assitant_model, words, labels, data))
+    print(chat_assistant(input(), assitant_model, words, labels))
 
     #bot.run(words, pat_y)
