@@ -147,9 +147,10 @@ if __name__ == "__main__":
     #    re = p.map(get_axis,data)
     #re = get_axis(data, q=quite)
     #chatbot_model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+    re = prepare_assistant()
     words, training, output, fourth = re
 
-    assitant_model = train(prepare_assistant(),HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+    assitant_model = train(re,HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
 
     labels = fourth
     print(chat_assistant(input(), assitant_model, words, labels, data))

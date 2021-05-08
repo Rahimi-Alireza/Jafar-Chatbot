@@ -199,7 +199,7 @@ def get_axis(data, q=False):
 
 def prepare_assistant(q=False):
     
-    with open("intents.json", encoding="UTF-8") as file:
+    with open("intent.json", encoding="UTF-8") as file:
         data = json.load(file)
     words = []
     labels = []
