@@ -97,20 +97,21 @@ def load_sub(path, deleted_char, quite):
         )  # Log how many files were loaded
         print(Fore.RED + "Ready to start learning")
     return data
-def chat(inp):
+def chat(inp, words, pat_y):
     """ use model prediction to predict the intent
     of input then response with one of the responses from
     the data . IT CAN NOT PRODUCE SENTENCES . it only 
     can understand what have been said.
     Params: 
+        inp (string): user message
         words (array): an array containing all of words in the whole data
         pat_y (array): an array containing responses to pat_x
     """
     # Model will return possibilty of intent tags
-    re = model.predict([ml.convert2bag(inp, words)])
+    re = model.predict([convert2bag(inp, words)])
     # Return the highest possibilty sentence
-    sentence = pat_y[np.argmax(re)]
-    return sentence
+    #sentence = pat_y[np.argmax(re)]
+    return re
 
 if __name__ == "__main__":
     args = init_argparse()
@@ -122,8 +123,8 @@ if __name__ == "__main__":
 
     # Model Training Consts
     hidden_layers = 5
-    e = 100  # epoch
-    b = 10  # batch
+    e = 10  # epoch
+    b = 40  # batch
     m = args.metric
 
     # Load params from argparser
@@ -146,4 +147,8 @@ if __name__ == "__main__":
     model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
 
     words, training, output, pat_y = re
-    bot.run(words, pat_y)
+    m = ["سلام", "خوبی","چطوری"]
+    for i in m:
+        print(chat(i,words,pat_y))
+
+    #bot.run(words, pat_y)

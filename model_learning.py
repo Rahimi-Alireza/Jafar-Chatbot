@@ -11,8 +11,10 @@ def tokenize(sentence):
     words = sentence.split(" ")
     zamir_malekiat = ["ت", "م", "ش", "تان", "شان", "مان"]
     neshane_jam = ["ان", "ات", "ها", "های"]
-    pasvand = ["بی", "با", "ن", "ب"]
-    pishvand = ["ی"]
+    #pasvand = ["بی", "با", "ن", "ب"]
+    #pishvand = ["ی"]
+    pasvand = []
+    pishvand = []
     useless_words = ["رو", "را", "به", "با", "از", "در", "برای"]
     result_words = []
     for w in words:
@@ -193,6 +195,45 @@ def get_axis(data, q=False):
     save_proccessed(re)  # Save for the second run optimization
     return re
 
+def prepare_assistant(data, q=False):
+
+    words = []
+    labels = []
+    docs_x = []
+    docs_y = []
+
+    for intent in data["intents"]:
+        for pattern in intent["patterns"]:
+            wrds = tokenize(pattern)
+            words.extend(wrds)
+            docs_x.append(wrds)
+            docs_y.append(intent["tag"])
+
+        if intent["tag"] not in labels:
+            labels.append(intent["tag"])
+
+
+    if not q:
+        print(Fore.GREEN + str(len(words)) + " words loaded ...")
+
+    # Remove duplicates
+    words = sorted(list(set(words)))
+    labels = sorted(labels)
+
+    train = []  # X
+    output = []  # Y
+
+
+    if not q:
+        print(Fore.CYAN + str(len(train)) + " training set loaded")
+
+    # Numpy array is required for training
+    # Also it's more efficent in Speed, Memory, Performance
+    train = np.array(train)
+    output = np.array(output)
+
+    re = (words, train, output, pat_y)
+    return re
 
 def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
     """Training based on train,output we had. It'll try to make connection between
@@ -227,13 +268,7 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
 
     model = tflearn.DNN(net)
 
-    try:
-        # If we have the model, Load it
-        model.load("modedl.tflearn")
-    except:
         # Pass the data
         # This model wants to figure out the relate of usage of some words
-        # and intent tags
-        model.fit(train, output, n_epoch=epoch, batch_size=batch, show_metric=metric)
-        model.save("model.tflearn")
+    model.fit(train, output, n_epoch=epoch, batch_size=batch, show_metric=metric)
     return model
