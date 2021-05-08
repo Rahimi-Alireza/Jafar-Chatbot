@@ -8,6 +8,7 @@ import argparse
 import numpy as np
 import intent
 import bot
+import os
 #import multiprocessing
 
 
@@ -113,7 +114,25 @@ def chat(inp, words, pat_y):
     # Return the highest possibilty sentence
     #sentence = pat_y[np.argmax(re)]
     return re
-
+def get_name(inp):
+    special = intent.get_special()
+    for i in special:
+        if i in inp:
+            return special[i]
+    return None
+def act(action, inp):
+    if action == "open":
+        name = get_name(inp)
+        if name is None:
+            return "نمیدونم چی رو میگی"
+        os.system(name)
+        return ("حله بازش کردم")
+    if action == "close":
+        name = get_name(inp)
+        if name is None:
+            return "نمیدونم چی رو میگی"
+        os.system(name)
+        return ("حله بستمش")
 
 
 if __name__ == "__main__":
@@ -146,14 +165,18 @@ if __name__ == "__main__":
     #cores = multiprocessing.cpu_count()
     #with multiprocessing.Pool(cores) as p:
     #    re = p.map(get_axis,data)
-    #re = get_axis(data, q=quite)
-    #chatbot_model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+    
     re = prepare_assistant()
     words, training, output, fourth = re
-
     assitant_model = train(re,HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
-
     labels = fourth
-    print(chat_assistant(input(), assitant_model, words, labels))
 
-    #bot.run(words, pat_y)
+    while True:
+        inp = input()
+        action = chat_assistant(inp, assitant_model, words, labels))
+        print(action)
+        act(action)
+
+
+    #re = get_axis(data, q=quite)
+    #chatbot_model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)

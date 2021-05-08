@@ -12,5 +12,14 @@ def get_data():
         }
    ]
 }
+def get_special():
+    return {
+        "دیسکورد" : "discord",
+        "استیم" : "steam" , 
+        "کروم" : "chrome" , 
+        "فایرفاکس" : "firefox",
+        "نوتپد" : "notepad" 
+    }
+
 
 
