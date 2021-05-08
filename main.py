@@ -113,6 +113,8 @@ def chat(inp, words, pat_y):
     #sentence = pat_y[np.argmax(re)]
     return re
 
+
+
 if __name__ == "__main__":
     args = init_argparse()
 

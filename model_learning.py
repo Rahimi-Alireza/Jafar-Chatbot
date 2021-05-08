@@ -6,6 +6,8 @@ import tflearn
 import tensorflow as tf
 import pickle
 from tqdm import tqdm
+import json
+import random
 
 def tokenize(sentence):
     words = sentence.split(" ")
@@ -196,7 +198,9 @@ def get_axis(data, q=False):
     return re
 
 def prepare_assistant(data, q=False):
-
+    
+    with open("intents.json", encoding="UTF-8") as file:
+        data = json.load(file)
     words = []
     labels = []
     docs_x = []
@@ -212,10 +216,6 @@ def prepare_assistant(data, q=False):
         if intent["tag"] not in labels:
             labels.append(intent["tag"])
 
-
-    if not q:
-        print(Fore.GREEN + str(len(words)) + " words loaded ...")
-
     # Remove duplicates
     words = sorted(list(set(words)))
     labels = sorted(labels)
@@ -223,16 +223,32 @@ def prepare_assistant(data, q=False):
     train = []  # X
     output = []  # Y
 
+    out_empty = [0 for _ in range(len(labels))]
+
+    for x, doc in tqdm(enumerate(docs_x)):
+        bag = []
+
+        wrds = [w for w in doc]
+
+        for w in words:
+            if w in wrds:
+                bag.append(1)
+            else:
+                bag.append(0)
+
+        output_row = out_empty[:]
+        output_row[labels.index(docs_y[x])] = 1
+
+        train.append(bag)
+        output.append(output_row)
 
     if not q:
         print(Fore.CYAN + str(len(train)) + " training set loaded")
 
-    # Numpy array is required for training
-    # Also it's more efficent in Speed, Memory, Performance
     train = np.array(train)
     output = np.array(output)
 
-    re = (words, train, output, pat_y)
+    re = (words, train, output, docs_y)
     return re
 
 def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
@@ -272,3 +288,15 @@ def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
         # This model wants to figure out the relate of usage of some words
     model.fit(train, output, n_epoch=epoch, batch_size=batch, show_metric=metric)
     return model
+
+
+
+
+def chat_assistant(inp, model, words, labels, data):
+    results = model.predict([convert2bag(inp, words)])
+    results_index = np.argmax(results)
+    tag = labels[results_index]
+    for tg in data["intents"]:
+        if tg['tag'] == tag:
+            responses = tg['responses']
+    return random.choice(responses)
