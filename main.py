@@ -6,6 +6,7 @@ import os
 from colorama import Fore, Style
 import argparse
 import numpy as np
+import intent
 import bot
 #import multiprocessing
 
