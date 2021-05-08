@@ -141,16 +141,17 @@ if __name__ == "__main__":
     if args.hiddenlayers is not None:
         hidden_layers = args.hiddenlayers
 
-    data = load_sub(path, deleted_char, quite)
+    #data = load_sub(path, deleted_char, quite)
     #cores = multiprocessing.cpu_count()
     #with multiprocessing.Pool(cores) as p:
     #    re = p.map(get_axis,data)
-    re = get_axis(data, q=quite)
-    model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+    #re = get_axis(data, q=quite)
+    #chatbot_model = train(re, HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+    words, training, output, fourth = re
 
-    words, training, output, pat_y = re
-    m = ["سلام", "خوبی","چطوری"]
-    for i in m:
-        print(chat(i,words,pat_y))
+    assitant_model = train(prepare_assistant(),HIDDEN_LAYERS=hidden_layers, epoch=e, batch=b, metric=m)
+
+    labels = fourth
+    print(chat_assistant(input(), assitant_model, words, labels, data))
 
     #bot.run(words, pat_y)

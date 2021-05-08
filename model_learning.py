@@ -197,7 +197,7 @@ def get_axis(data, q=False):
     save_proccessed(re)  # Save for the second run optimization
     return re
 
-def prepare_assistant(data, q=False):
+def prepare_assistant(q=False):
     
     with open("intents.json", encoding="UTF-8") as file:
         data = json.load(file)
@@ -248,7 +248,7 @@ def prepare_assistant(data, q=False):
     train = np.array(train)
     output = np.array(output)
 
-    re = (words, train, output, docs_y)
+    re = (words, train, output, labels)
     return re
 
 def train(re, HIDDEN_LAYERS=5, epoch=100, batch=10, metric=False):
